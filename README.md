@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="#quick-start">
-    <img src="docs/assets/screenshot.png" alt="Change Review showing a real diff, important changes, a hover explanation, and pinned source context" width="1200">
+  <a href="docs/assets/screenshot.png">
+    <img src="docs/assets/screenshot.png" alt="Close-up of a highlighted code change with its hover context card explaining behavior and callers" width="1200">
   </a>
 </p>
 
