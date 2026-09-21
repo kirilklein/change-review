@@ -1,0 +1,6 @@
+__pycache__/
+.DS_Store
+snapshot.json
+annotations.json
+request.txt
+index.html

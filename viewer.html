@@ -1,0 +1,1121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>Change Review</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --paper: #faf9f6;
+        --white: #fff;
+        --ink: #262a2b;
+        --muted: #747a78;
+        --line: #e4e6e1;
+        --accent: #a65c23;
+        --tint: #fbf0e3;
+        --green: #236a4f;
+        --red: #a33e47;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font:
+          14px/1.55 -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+      button,
+      input {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+        color: inherit;
+      }
+      button:focus-visible,
+      summary:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+      }
+      button {
+        border: 1px solid var(--line);
+        background: white;
+        border-radius: 7px;
+        padding: 6px 10px;
+      }
+      button:hover {
+        background: #f2f3ee;
+      }
+      button:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+      header {
+        height: 64px;
+        padding: 0 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+        background: var(--white);
+        gap: 20px;
+      }
+      .brand {
+        font-weight: 650;
+        letter-spacing: -0.5px;
+        font-size: 18px;
+        white-space: nowrap;
+      }
+      .brand span {
+        color: var(--accent);
+        margin-right: 9px;
+      }
+      .eyebrow {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--muted);
+        font-weight: 650;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .small {
+        font-size: 12px;
+      }
+      p code {
+        font:
+          0.92em ui-monospace,
+          SFMono-Regular,
+          Consolas,
+          monospace;
+        background: #e9ece655;
+        padding: 1px 3px;
+        border-radius: 3px;
+      }
+      .chip {
+        display: inline-block;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: 2px 7px;
+        font-size: 11px;
+        color: var(--muted);
+        background: var(--white);
+      }
+      .chip.focus {
+        color: var(--accent);
+        background: var(--tint);
+        border-color: #edd2b6;
+      }
+      .chip.mechanical {
+        color: var(--muted);
+        background: #f0f1ee;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 232px minmax(360px, 1fr) 340px;
+        min-height: calc(100vh - 64px);
+      }
+      nav {
+        padding: 26px 16px;
+        border-right: 1px solid var(--line);
+      }
+      .nav-inner {
+        position: sticky;
+        top: 24px;
+        max-height: calc(100vh - 48px);
+        overflow: auto;
+      }
+      #search {
+        width: 100%;
+        padding: 9px 10px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        margin: 14px 0 12px;
+        background: var(--white);
+      }
+      .filters {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 24px;
+      }
+      .filters button {
+        flex: 1;
+        font-size: 12px;
+        padding: 5px;
+      }
+      .filters button[aria-pressed="true"] {
+        background: var(--ink);
+        border-color: var(--ink);
+        color: white;
+      }
+      #files {
+        margin: 10px -6px 25px;
+      }
+      .file-link {
+        display: block;
+        text-align: left;
+        width: 100%;
+        background: transparent;
+        border: 0;
+        border-radius: 6px;
+        padding: 10px;
+        margin-bottom: 3px;
+        overflow-wrap: anywhere;
+      }
+      .file-link[aria-current="true"] {
+        background: #ebece6;
+      }
+      .file-link strong {
+        font-weight: 550;
+        display: block;
+        font-size: 12px;
+      }
+      .file-link .folder {
+        font-size: 10px;
+        color: var(--muted);
+        display: block;
+        margin-bottom: 4px;
+      }
+      .counts {
+        font:
+          11px ui-monospace,
+          SFMono-Regular,
+          Consolas,
+          monospace;
+      }
+      .plus {
+        color: var(--green);
+      }
+      .minus {
+        color: var(--red);
+      }
+      .route-link {
+        display: block;
+        text-align: left;
+        border: 0;
+        background: none;
+        width: 100%;
+        padding: 9px 3px;
+        font-size: 12px;
+      }
+      .route-link span {
+        color: var(--accent);
+        margin-right: 7px;
+      }
+      main {
+        min-width: 0;
+        padding: 28px 28px 70px;
+      }
+      h1 {
+        margin: 6px 0 12px;
+        font:
+          500 28px/1.2 Georgia,
+          serif;
+        letter-spacing: -0.5px;
+        overflow-wrap: anywhere;
+      }
+      #summary {
+        font-size: 14px;
+        color: #535c58;
+        max-width: 820px;
+        margin: 0 0 16px;
+      }
+      .metadata {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 22px;
+      }
+      .notice {
+        padding: 12px 15px;
+        border-left: 3px solid #d6a05f;
+        background: #fbf2e5;
+        color: #795635;
+        font-size: 12px;
+        margin: 12px 0;
+      }
+      details {
+        border: 1px solid var(--line);
+        background: white;
+        border-radius: 7px;
+        padding: 10px 12px;
+        margin: 10px 0;
+      }
+      summary {
+        cursor: pointer;
+        font-size: 12px;
+      }
+      pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        font:
+          12px/1.65 ui-monospace,
+          SFMono-Regular,
+          Consolas,
+          monospace;
+      }
+      .file-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 28px 0 15px;
+      }
+      .file-title {
+        font:
+          12px ui-monospace,
+          SFMono-Regular,
+          Consolas,
+          monospace;
+        overflow-wrap: anywhere;
+        font-weight: 600;
+      }
+      .hunk {
+        position: relative;
+        background: white;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        margin-bottom: 20px;
+        scroll-margin-top: 20px;
+      }
+      .hunk.selected {
+        border-color: #bc8c5d;
+        box-shadow: 0 0 0 2px #bc8c5d18;
+      }
+      .hunk-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px 15px;
+        border-bottom: 1px solid var(--line);
+      }
+      .hunk-title {
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+      .hint {
+        position: relative;
+        display: inline-block;
+      }
+      .context-button {
+        font-size: 11px;
+        border: 0;
+        padding: 4px 7px;
+        background: #f3f3ef;
+        white-space: nowrap;
+      }
+      .peek {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        width: 290px;
+        padding: 15px;
+        border: 1px solid var(--line);
+        background: white;
+        box-shadow: 0 8px 28px #202a2820;
+        border-radius: 8px;
+        z-index: 5;
+        font-size: 12px;
+        font-weight: 400;
+      }
+      .hint:hover .peek,
+      .hint:focus-within .peek {
+        display: block;
+      }
+      .peek strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+      .hunk-location {
+        padding: 6px 14px;
+        font:
+          10px/1.5 ui-monospace,
+          SFMono-Regular,
+          Consolas,
+          monospace;
+        color: var(--muted);
+        background: #f8f9f6;
+        overflow-wrap: anywhere;
+      }
+      .code {
+        overflow-x: auto;
+        padding: 6px 0;
+      }
+      .code-line {
+        display: grid;
+        grid-template-columns: 37px 37px 20px 1fr;
+        min-width: max-content;
+        font:
+          11.5px/1.9 ui-monospace,
+          SFMono-Regular,
+          Consolas,
+          monospace;
+        padding-right: 18px;
+        border-left: 3px solid transparent;
+      }
+      .code-line.add {
+        background: #eaf5ed;
+      }
+      .code-line.del {
+        background: #fbeef0;
+      }
+      .hunk.important .code-line.add,
+      .hunk.important .code-line.del {
+        border-left-color: #b98344;
+      }
+      .line-number {
+        color: #98a19a;
+        text-align: right;
+        padding-right: 8px;
+        user-select: none;
+      }
+      .sign {
+        text-align: center;
+        color: #7d8b80;
+        user-select: none;
+      }
+      .line-text {
+        white-space: pre;
+      }
+      .hunk-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 13px;
+        border-top: 1px solid var(--line);
+        font-size: 11px;
+      }
+      .read-button {
+        border: 0;
+        padding: 3px 5px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .read-button[aria-pressed="true"] {
+        color: var(--green);
+      }
+      aside {
+        border-left: 1px solid var(--line);
+        background: #f5f5f0;
+        padding: 26px 22px;
+      }
+      .context-inner {
+        position: sticky;
+        top: 24px;
+        max-height: calc(100vh - 48px);
+        overflow: auto;
+      }
+      #context h2 {
+        font:
+          500 23px/1.25 Georgia,
+          serif;
+        margin: 14px 0 12px;
+      }
+      #context h3 {
+        font-size: 10px;
+        letter-spacing: 1.1px;
+        text-transform: uppercase;
+        margin: 25px 0 8px;
+        color: var(--muted);
+      }
+      #context p {
+        font-size: 13px;
+        margin: 6px 0;
+      }
+      .context-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .arrows {
+        display: flex;
+        gap: 4px;
+      }
+      .arrows button {
+        font-size: 12px;
+        padding: 2px 8px;
+      }
+      .check {
+        background: #fff8ee;
+        border: 1px solid #ecdac0;
+        border-radius: 7px;
+        padding: 12px;
+        margin-top: 22px;
+      }
+      .check h3 {
+        margin: 0 0 7px !important;
+        color: var(--accent) !important;
+      }
+      .evidence-link {
+        display: block;
+        width: 100%;
+        text-align: left;
+        font-size: 11px;
+        padding: 8px 10px;
+        margin: 6px 0;
+        overflow-wrap: anywhere;
+      }
+      .progress {
+        height: 3px;
+        background: var(--line);
+        margin: 7px 0;
+        border-radius: 4px;
+      }
+      .progress > div {
+        height: 100%;
+        background: var(--green);
+        transition: width 0.2s;
+      }
+      .empty {
+        text-align: center;
+        padding: 45px 10px;
+        color: var(--muted);
+      }
+      dialog {
+        width: min(900px, 92vw);
+        max-height: 85vh;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 20px 70px #0003;
+      }
+      dialog::backdrop {
+        background: #16231c66;
+      }
+      .dialog-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+      #evidence-code {
+        overflow: auto;
+        white-space: pre;
+        background: #f7f8f4;
+        padding: 15px;
+        border-radius: 6px;
+      }
+      @media (min-width: 1600px) {
+        .layout {
+          grid-template-columns: 260px minmax(360px, 1fr) 390px;
+        }
+        main {
+          padding-left: 45px;
+          padding-right: 45px;
+        }
+        aside {
+          padding-left: 30px;
+          padding-right: 30px;
+        }
+      }
+      @media (max-width: 1050px) {
+        .layout {
+          grid-template-columns: 190px minmax(300px, 1fr) 290px;
+        }
+        main {
+          padding: 22px 15px;
+        }
+        aside {
+          padding: 24px 15px;
+        }
+        header {
+          padding: 0 18px;
+        }
+      }
+      @media (max-width: 800px) {
+        .layout {
+          grid-template-columns: 160px minmax(0, 1fr);
+        }
+        aside {
+          grid-column: 1/-1;
+          border-top: 1px solid var(--line);
+        }
+        .context-inner,
+        .nav-inner {
+          position: static;
+          max-height: none;
+        }
+        header .small {
+          display: none;
+        }
+        h1 {
+          font-size: 24px;
+        }
+        .peek {
+          width: 220px;
+        }
+      }
+      @media (max-width: 500px) {
+        .layout {
+          display: block;
+        }
+        nav {
+          padding: 15px;
+          border-bottom: 1px solid var(--line);
+        }
+        #files {
+          max-height: 160px;
+          overflow: auto;
+        }
+        #route {
+          display: none;
+        }
+        .filters {
+          margin-bottom: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand"><span>◈</span>Change Review</div>
+      <div class="muted small">Read the change. Keep the context.</div>
+      <span class="chip">LOCAL SNAPSHOT</span>
+    </header>
+    <div class="layout">
+      <nav aria-label="Changed files">
+        <div class="nav-inner">
+          <div class="eyebrow">Your reading list</div>
+          <input
+            id="search"
+            type="search"
+            placeholder="Find a file or concept…"
+            aria-label="Find a file or concept"
+          />
+          <div class="filters">
+            <button id="all-filter" aria-pressed="true">All changes</button
+            ><button id="focus-filter" aria-pressed="false">Focus first</button>
+          </div>
+          <div class="eyebrow" id="file-count"></div>
+          <div id="files"></div>
+          <div id="route"></div>
+          <div class="progress"><div id="progress-bar"></div></div>
+          <div class="muted small" id="progress-label"></div>
+        </div>
+      </nav>
+      <main>
+        <div class="eyebrow">A guided look at your code</div>
+        <h1 id="title"></h1>
+        <p id="summary"></p>
+        <div class="metadata" id="metadata"></div>
+        <div id="notices"></div>
+        <details id="intent-details">
+          <summary>Original request &amp; PR context</summary>
+          <pre id="intent"></pre>
+        </details>
+        <div id="diff"></div>
+      </main>
+      <aside aria-label="Change context">
+        <div class="context-inner">
+          <div class="context-head">
+            <div class="eyebrow">Context, where you need it</div>
+            <div class="arrows">
+              <button id="previous" aria-label="Previous change">←</button
+              ><button id="next" aria-label="Next change">→</button>
+            </div>
+          </div>
+          <div id="context" aria-live="polite"></div>
+        </div>
+      </aside>
+    </div>
+    <dialog id="evidence-dialog" aria-labelledby="evidence-title">
+      <div class="dialog-head">
+        <strong id="evidence-title"></strong
+        ><button id="close-evidence">Close</button>
+      </div>
+      <p class="small muted" id="evidence-meta"></p>
+      <pre id="evidence-code"></pre>
+    </dialog>
+    <script id="review-data" type="application/json">
+      __REVIEW_DATA__
+    </script>
+    <script>
+      const { snapshot: S, review: R } = JSON.parse(
+        document.getElementById("review-data").textContent,
+      );
+      const $ = (id) => document.getElementById(id);
+      const annotations = new Map(
+        (R?.annotations || []).map((a) => [a.hunk_id, a]),
+      );
+      const hunks = S.files.flatMap((f) =>
+        f.hunks.map((h) => ({ ...h, file: f })),
+      );
+      const hunkMap = new Map(hunks.map((h) => [h.id, h]));
+      let selectedFile = S.files[0]?.id,
+        selectedHunk = hunks[0]?.id,
+        focusOnly = false,
+        query = "";
+      let read = new Set();
+      try {
+        const saved = JSON.parse(
+          localStorage.getItem("change-review:" + S.snapshot_id) || "[]",
+        );
+        if (Array.isArray(saved))
+          read = new Set(saved.filter((id) => hunkMap.has(id)));
+      } catch (_) {}
+      function prose(node, text) {
+        for (const part of text.split(/(`[^`]+`)/g))
+          node.append(
+            part.startsWith("`") && part.endsWith("`")
+              ? el("code", part.slice(1, -1))
+              : document.createTextNode(part),
+          );
+      }
+      function el(tag, text, className) {
+        const node = document.createElement(tag);
+        if (text !== undefined) {
+          if (tag === "p") prose(node, text);
+          else node.textContent = text;
+        }
+        if (className) node.className = className;
+        return node;
+      }
+      function button(text, action, className) {
+        const node = el("button", text, className);
+        node.onclick = action;
+        return node;
+      }
+      function matches(h, f) {
+        const a = annotations.get(h.id);
+        return (
+          (!focusOnly || a?.importance === "focus") &&
+          (!query ||
+            (
+              f.path +
+              " " +
+              JSON.stringify(a || {}) +
+              " " +
+              h.lines.map((l) => l.text).join(" ")
+            )
+              .toLowerCase()
+              .includes(query))
+        );
+      }
+      function visibleFiles() {
+        return S.files.filter(
+          (f) =>
+            f.hunks.some((h) => matches(h, f)) ||
+            (!f.hunks.length &&
+              !focusOnly &&
+              f.path.toLowerCase().includes(query)),
+        );
+      }
+      function counts(f) {
+        const lines = f.hunks.flatMap((h) => h.lines);
+        const node = el("span", undefined, "counts");
+        node.append(
+          el(
+            "span",
+            "+" + lines.filter((l) => l.kind === "add").length,
+            "plus",
+          ),
+          el(
+            "span",
+            "  −" + lines.filter((l) => l.kind === "del").length,
+            "minus",
+          ),
+        );
+        return node;
+      }
+      function progress() {
+        $("progress-label").textContent =
+          `${read.size} of ${hunks.length} blocks read`;
+        $("progress-bar").style.width =
+          (hunks.length ? (read.size / hunks.length) * 100 : 0) + "%";
+      }
+      function choose(id, scroll = false) {
+        const h = hunkMap.get(id);
+        if (!h) return;
+        selectedHunk = id;
+        selectedFile = h.file.id;
+        if (!matches(h, h.file)) {
+          focusOnly = false;
+          query = "";
+          $("search").value = "";
+        }
+        draw();
+        if (scroll)
+          $(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      function showEvidence(e) {
+        $("evidence-title").textContent = `${e.path}:${e.start}`;
+        $("evidence-meta").textContent =
+          `${e.side === "before" ? "Before · " + S.base.slice(0, 10) : "After · " + (S.working_tree ? "captured working tree" : S.head.slice(0, 10))} · snapshot ${S.snapshot_id.slice(0, 12)}`;
+        $("evidence-code").textContent = e.content
+          .split("\n")
+          .map((line, i) => String(e.start + i).padStart(4) + "  " + line)
+          .join("\n");
+        $("evidence-dialog").showModal();
+      }
+      function section(root, title, text) {
+        root.append(el("h3", title), el("p", text));
+      }
+      function context() {
+        const root = $("context");
+        root.replaceChildren();
+        const h = hunkMap.get(selectedHunk),
+          a = annotations.get(selectedHunk);
+        if (!h) {
+          root.append(
+            el("h2", "Nothing selected"),
+            el("p", "Choose a changed block to explore its context."),
+          );
+          return;
+        }
+        root.append(
+          el("h2", a?.title || h.symbol || "Explore this block"),
+          el("div", h.file.path, "small muted"),
+        );
+        if (a) {
+          root.append(
+            el(
+              "span",
+              a.importance === "focus" ? "Worth your attention" : a.importance,
+              "chip " + a.importance,
+            ),
+          );
+          section(root, "What changed", a.what);
+          section(root, "Where this fits", a.where);
+          root.append(
+            el("h3", "Why it changed"),
+            el("span", a.why_basis, "chip"),
+            el("p", a.why),
+          );
+          if (a.check) {
+            const check = el("div", undefined, "check");
+            check.append(el("h3", "A question to check"), el("p", a.check));
+            root.append(check);
+          }
+          if (a.related_hunks.length) {
+            root.append(el("h3", "Read together"));
+            for (const id of a.related_hunks)
+              root.append(
+                button(
+                  annotations.get(id)?.title || hunkMap.get(id).file.path,
+                  () => choose(id, true),
+                  "evidence-link",
+                ),
+              );
+          }
+        } else {
+          section(
+            root,
+            "Explanation not prepared",
+            "The code below is an exact snapshot. Add Claude annotations to see its purpose, connections, and suggested review focus.",
+          );
+        }
+        const cited = a?.evidence_ids || [];
+        const sources = S.evidence.filter(
+          (e) => cited.includes(e.id) || (!a && e.path === h.file.path),
+        );
+        root.append(
+          el("h3", a ? "Evidence behind this explanation" : "Source context"),
+        );
+        if (!sources.length)
+          root.append(
+            el("p", "No source excerpt cited for this block.", "muted"),
+          );
+        for (const e of sources)
+          root.append(
+            button(
+              `${e.path}:${e.start} · ${e.side}`,
+              () => showEvidence(e),
+              "evidence-link",
+            ),
+          );
+        root.append(
+          el(
+            "p",
+            "Explanations are suggestions for your review. Source links open the captured code.",
+            "small muted",
+          ),
+        );
+      }
+      function draw() {
+        const files = visibleFiles();
+        if (!files.some((f) => f.id === selectedFile))
+          selectedFile = files[0]?.id;
+        const file = files.find((f) => f.id === selectedFile);
+        const shown = file?.hunks.filter((h) => matches(h, file)) || [];
+        if (!shown.some((h) => h.id === selectedHunk))
+          selectedHunk = shown[0]?.id;
+        $("all-filter").setAttribute("aria-pressed", String(!focusOnly));
+        $("focus-filter").setAttribute("aria-pressed", String(focusOnly));
+        $("file-count").textContent =
+          `${files.length} of ${S.files.length} files`;
+        $("files").replaceChildren();
+        for (const f of files) {
+          const node = button(
+            "",
+            () => {
+              selectedFile = f.id;
+              selectedHunk = undefined;
+              draw();
+            },
+            "file-link",
+          );
+          node.setAttribute("aria-label", f.path);
+          node.setAttribute("aria-current", String(f.id === selectedFile));
+          const parts = f.path.split("/");
+          const name = parts.pop();
+          if (parts.length)
+            node.append(el("span", parts.join("/") + "/", "folder"));
+          node.append(el("strong", name), counts(f));
+          if (
+            f.hunks.some((h) => annotations.get(h.id)?.importance === "focus")
+          )
+            node.append(el("span", " · focus", "small muted"));
+          $("files").append(node);
+        }
+        const route = $("route");
+        route.replaceChildren();
+        if (R?.annotations.length) {
+          route.append(el("div", "Suggested reading order", "eyebrow"));
+          R.annotations.forEach((a, i) => {
+            const b = button("", () => choose(a.hunk_id, true), "route-link");
+            b.append(
+              el("span", String(i + 1).padStart(2, "0")),
+              document.createTextNode(a.title),
+            );
+            route.append(b);
+          });
+        }
+        const diff = $("diff");
+        diff.replaceChildren();
+        if (!file)
+          diff.append(
+            el(
+              "div",
+              S.files.length
+                ? "No changes match this filter."
+                : S.omitted.length
+                  ? "All changed files were omitted. See the reasons above."
+                  : "No changes in this comparison.",
+              "empty",
+            ),
+          );
+        else {
+          const heading = el("div", undefined, "file-header");
+          heading.append(el("div", file.path, "file-title"), counts(file));
+          diff.append(heading);
+          if (!shown.length) diff.append(el("pre", file.patch));
+          for (const h of shown) {
+            const a = annotations.get(h.id);
+            const card = el(
+              "article",
+              undefined,
+              "hunk" +
+                (selectedHunk === h.id ? " selected" : "") +
+                (a?.importance === "focus" ? " important" : ""),
+            );
+            card.id = h.id;
+            const top = el("div", undefined, "hunk-top"),
+              title = el("div");
+            title.append(
+              el("div", a?.title || h.symbol || "Changed block", "hunk-title"),
+              el(
+                "span",
+                a
+                  ? a.importance === "focus"
+                    ? "● Focus"
+                    : a.importance
+                  : "Source available",
+                "chip " + (a?.importance || ""),
+              ),
+            );
+            const hint = el("div", undefined, "hint"),
+              pin = button("ⓘ Context", () => choose(h.id), "context-button");
+            pin.setAttribute(
+              "aria-label",
+              "Show context: " + (a?.title || h.id),
+            );
+            const peek = el("div", undefined, "peek");
+            peek.append(
+              el("strong", a?.title || "Source context"),
+              el(
+                "div",
+                a?.what || "Click to read source excerpts for this block.",
+              ),
+            );
+            if (a?.where) peek.append(el("p", a.where, "muted"));
+            hint.append(pin, peek);
+            top.append(title, hint);
+            card.append(top, el("div", h.header, "hunk-location"));
+            const code = el("div", undefined, "code");
+            code.onclick = () => choose(h.id);
+            for (const line of h.lines) {
+              const row = el("div", undefined, "code-line " + line.kind);
+              row.append(
+                el(
+                  "span",
+                  line.old == null ? "" : String(line.old),
+                  "line-number",
+                ),
+                el(
+                  "span",
+                  line.new == null ? "" : String(line.new),
+                  "line-number",
+                ),
+                el(
+                  "span",
+                  line.kind === "add" ? "+" : line.kind === "del" ? "−" : "",
+                  "sign",
+                ),
+                el("span", line.text, "line-text"),
+              );
+              code.append(row);
+            }
+            card.append(code);
+            const foot = el("div", undefined, "hunk-foot");
+            foot.append(
+              el(
+                "span",
+                a
+                  ? "Hover ⓘ for a quick explanation · click to keep it open"
+                  : "Click the block to explore source context",
+                "muted",
+              ),
+            );
+            const mark = button(
+              read.has(h.id) ? "✓ Read" : "Mark read",
+              () => {
+                if (read.has(h.id)) read.delete(h.id);
+                else read.add(h.id);
+                try {
+                  localStorage.setItem(
+                    "change-review:" + S.snapshot_id,
+                    JSON.stringify([...read]),
+                  );
+                } catch (_) {}
+                draw();
+              },
+              "read-button",
+            );
+            mark.setAttribute("aria-pressed", String(read.has(h.id)));
+            foot.append(mark);
+            card.append(foot);
+            diff.append(card);
+          }
+        }
+        const selectedIndex = hunks.findIndex((h) => h.id === selectedHunk);
+        $("previous").disabled = selectedIndex <= 0;
+        $("next").disabled =
+          selectedIndex < 0 || selectedIndex >= hunks.length - 1;
+        progress();
+        context();
+      }
+      $("title").textContent = S.title;
+      document.title = S.title + " · Change Review";
+      prose(
+        $("summary"),
+        R?.summary ||
+          "Your Git diff, with source context ready to explore. Explanations have not been generated yet.",
+      );
+      $("metadata").append(
+        el("span", S.branch, "chip"),
+        el(
+          "span",
+          S.base.slice(0, 8) +
+            " → " +
+            (S.working_tree ? "working tree" : S.head.slice(0, 8)),
+          "chip",
+        ),
+        el("span", S.snapshot_id.slice(0, 12), "chip"),
+      );
+      $("intent").textContent =
+        [
+          S.intent,
+          S.pr
+            ? `PR #${S.pr.number}: ${S.pr.title}\n${S.pr.url}\n\n${S.pr.body}`
+            : "",
+        ]
+          .filter(Boolean)
+          .join("\n\n") ||
+        "No original request was supplied. Any rationale must be treated as inferred.";
+      if (!R)
+        $("notices").append(
+          el(
+            "div",
+            "No AI explanations yet. Run with --explain, or have your agent answer request.txt and import its annotations.",
+            "notice",
+          ),
+        );
+      else if (annotations.size < hunks.length)
+        $("notices").append(
+          el(
+            "div",
+            `${hunks.length - annotations.size} blocks have no explanation. They remain visible in All changes.`,
+            "notice",
+          ),
+        );
+      if (S.omitted.length) {
+        const omitted = el("details");
+        omitted.append(
+          el(
+            "summary",
+            `${S.omitted.length} files omitted — this review is incomplete`,
+          ),
+        );
+        for (const item of S.omitted)
+          omitted.append(el("p", item.path + ": " + item.reason, "small"));
+        $("notices").append(omitted);
+      }
+      const evidence = el("details");
+      evidence.append(
+        el(
+          "summary",
+          `Browse all source context (${S.evidence.length} excerpts)`,
+        ),
+        el("p", S.context_note, "small muted"),
+      );
+      for (const e of S.evidence)
+        evidence.append(
+          button(
+            `${e.path}:${e.start} · ${e.side}`,
+            () => showEvidence(e),
+            "evidence-link",
+          ),
+        );
+      $("notices").append(evidence);
+      $("search").oninput = (event) => {
+        query = event.target.value.toLowerCase();
+        draw();
+      };
+      $("all-filter").onclick = () => {
+        focusOnly = false;
+        draw();
+      };
+      $("focus-filter").onclick = () => {
+        focusOnly = true;
+        draw();
+      };
+      $("previous").onclick = () =>
+        choose(
+          hunks[hunks.findIndex((h) => h.id === selectedHunk) - 1]?.id,
+          true,
+        );
+      $("next").onclick = () =>
+        choose(
+          hunks[hunks.findIndex((h) => h.id === selectedHunk) + 1]?.id,
+          true,
+        );
+      $("close-evidence").onclick = () => $("evidence-dialog").close();
+      draw();
+    </script>
+  </body>
+</html>
