@@ -1,0 +1,4 @@
+[flake8]
+max-line-length = 88
+# Black adds whitespace around complex slice expressions.
+extend-ignore = E203

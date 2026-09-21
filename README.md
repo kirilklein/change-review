@@ -1,6 +1,6 @@
 <p align="center">
   <a href="docs/assets/screenshot.png">
-    <img src="docs/assets/screenshot.png" alt="Dark-theme close-up of a highlighted code change with its hover context card explaining behavior and callers" width="1200">
+    <img src="docs/assets/screenshot.png" alt="GitHub-style dark review with a directory tree, file-level Viewed controls, and an expanded context map showing an unchanged caller beside its source" width="1200">
   </a>
 </p>
 
@@ -41,14 +41,23 @@ Your browser remembers your choice.
 
 ## A diff you can explore
 
-| While you read                 | What you get                                                                                                            |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| **Find the important parts**   | Focus highlights identify changes the model thinks deserve attention. Every block remains available in **All changes**. |
-| **Hover, then go deeper**      | A quick context card on hover; click to keep the full explanation open beside the code.                                 |
-| **Understand the reason**      | What changed, where it fits, and why—with rationale labeled **stated intent**, **inferred**, or **unknown**.            |
-| **Check the evidence**         | Open captured source excerpts with file paths, line numbers, and before/after labels.                                   |
-| **Follow the whole change**    | A suggested reading order and **Read together** links connect edits across files.                                       |
-| **Pick up where you left off** | Mark blocks as read. Progress is saved in your browser for that exact snapshot.                                         |
+| While you read                 | What you get                                                                                                                                                                   |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Find the important parts**   | Scroll through every file in suggested review order: focus changes first, supporting changes next, mechanical changes last. Switch to file path order anytime.                 |
+| **Hover, then go deeper**      | A small context cue beneath the relevant code. Hover for the consequence; click for rationale and a local map of related code.                                                 |
+| **Understand the reason**      | Rationale stays inside expandable context, labeled **stated intent**, **inferred**, or **unknown**.                                                                            |
+| **Check the evidence**         | Open captured source excerpts with file paths, line numbers, and before/after labels.                                                                                          |
+| **Follow the whole change**    | A directory tree follows your scroll. The context map links suggested related edits and cited sources, including unchanged files. Source excerpts open alongside the context.  |
+| **Pick up where you left off** | Mark a file **Viewed** to collapse all its changes. Expand it without clearing its marker. Progress is saved for that exact snapshot; older block-level progress is preserved. |
+
+New annotations have character budgets: a short overall summary, one takeaway per
+block, and a brief hover explanation. Specific review questions remain visible.
+Long summaries from older annotations remain available under **Review context & sources**.
+Suggested order reflects model annotations, not a verified risk score; unannotated
+blocks stay visible, and hunks within each file keep their source order.
+The directory tree stays in path order. Search filters whole files, so **Viewed**
+always applies to all the hunks in a file. Context-map links identify suggested
+related edits and cited sources; they do not claim a verified call graph.
 
 ## Quick start
 
@@ -172,9 +181,21 @@ retry using `--snapshot` or import annotations from another session.
 
 ## Development
 
+The [marketing and launch plan](docs/marketing-plan.md) records the positioning,
+demo storyboard, pilot, and launch steps.
+
 ```bash
 python3 -m unittest -v
 ```
+
+With Black and Flake8 installed, check Python formatting and lint with:
+
+```bash
+black --check review.py test_review.py
+flake8 review.py test_review.py
+```
+
+The lint configuration uses Black's 88-character line length and slice spacing.
 
 The tests cover Git comparisons, captured source versions, exclusions, annotation
 validation, safe HTML embedding, and the CLI transport with a fake Claude process.
