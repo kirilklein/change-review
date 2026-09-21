@@ -17,6 +17,8 @@
     <style>
       :root {
         color-scheme: dark;
+        --link: #8cb8ff;
+        --range: #222c3b;
         --paper: #141416;
         --surface: #1c1c20;
         --panel: #18181b;
@@ -41,6 +43,8 @@
       }
       :root[data-theme="light"] {
         color-scheme: light;
+        --link: #245baf;
+        --range: #e9eff8;
         --paper: #faf9f6;
         --surface: #fff;
         --panel: #f5f5f0;
@@ -65,6 +69,9 @@
       }
       * {
         box-sizing: border-box;
+      }
+      [hidden] {
+        display: none !important;
       }
       body {
         margin: 0;
@@ -181,13 +188,13 @@
       }
       .layout {
         display: grid;
-        grid-template-columns: 220px minmax(0, 1fr);
+        grid-template-columns: 260px minmax(0, 1fr);
         max-width: 1500px;
         margin: 0 auto;
         min-height: calc(100vh - 64px);
       }
       nav {
-        padding: 26px 16px;
+        padding: 20px 12px;
         border-right: 1px solid var(--line);
       }
       .nav-inner {
@@ -205,41 +212,63 @@
         background: var(--surface);
       }
       #order {
-        width: 100%;
-        padding: 7px;
-        margin: 6px 0 20px;
+        padding: 5px 8px;
         border: 1px solid var(--line);
         border-radius: 6px;
         background: var(--surface);
         font-size: 12px;
+        max-width: 100%;
       }
       #files {
-        margin: 10px -6px 25px;
+        margin-top: 10px;
+      }
+      .tree-folder {
+        border: 0;
+        background: none;
+        padding: 0;
+        margin: 0;
+      }
+      .tree-folder > summary {
+        padding: 6px 4px;
+        color: var(--muted);
+        overflow-wrap: anywhere;
+      }
+      .tree-folder > summary .icon {
+        margin: 0 5px 0 2px;
+      }
+      .tree-children {
+        padding-left: 12px;
       }
       .file-link {
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: 7px;
         text-align: left;
         width: 100%;
         background: transparent;
         border: 0;
-        border-radius: 6px;
-        padding: 10px;
-        margin-bottom: 3px;
-        overflow-wrap: anywhere;
+        border-radius: 5px;
+        padding: 6px 8px;
+        font-size: 12px;
       }
       .file-link[aria-current="true"] {
         background: var(--selected);
       }
-      .file-link strong {
-        font-weight: 550;
-        display: block;
-        font-size: 12px;
+      .file-link .file-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
-      .file-link .folder {
-        font-size: 10px;
+      .tree-status {
+        margin-left: auto;
         color: var(--muted);
-        display: block;
-        margin-bottom: 4px;
+      }
+      .icon {
+        width: 15px;
+        height: 15px;
+        flex-shrink: 0;
+        vertical-align: -3px;
+        color: var(--muted);
       }
       .counts {
         font:
@@ -256,13 +285,15 @@
       }
       main {
         min-width: 0;
-        padding: 28px 28px 70px;
+        padding: 20px 20px 60px;
       }
       h1 {
-        margin: 6px 0 12px;
+        margin: 0 0 8px;
         font:
-          500 28px/1.2 Georgia,
-          serif;
+          600 20px/1.3 -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
         letter-spacing: -0.5px;
         overflow-wrap: anywhere;
       }
@@ -270,14 +301,14 @@
         font-size: 14px;
         color: var(--summary);
         max-width: 820px;
-        margin: 0 0 16px;
+        margin: 0 0 12px;
       }
       .metadata {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
         gap: 8px;
-        margin-bottom: 22px;
+        margin-bottom: 12px;
       }
       .notice {
         padding: 12px 15px;
@@ -307,83 +338,109 @@
           Consolas,
           monospace;
       }
+      .review-toolbar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        border-bottom: 1px solid var(--line);
+        padding: 12px 0;
+        margin: 10px 0 16px;
+      }
+      .review-toolbar strong {
+        font-size: 13px;
+        margin-right: auto;
+      }
+      .file-section {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        margin-bottom: 16px;
+        scroll-margin-top: 12px;
+      }
       .file-header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
         gap: 12px;
-        margin: 0 0 12px;
-        padding: 12px 0;
+        padding: 9px 12px;
+        background: var(--subtle);
+        border-radius: 6px 6px 0 0;
         border-bottom: 1px solid var(--line);
       }
-      .file-title {
-        font:
-          12px ui-monospace,
-          SFMono-Regular,
-          Consolas,
-          monospace;
-        overflow-wrap: anywhere;
-        font-weight: 600;
-      }
-      .hunk {
-        position: relative;
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 9px;
-        margin-bottom: 20px;
-        scroll-margin-top: 20px;
-      }
-      .hunk-top {
+      .file-toggle {
         display: flex;
         align-items: center;
-        justify-content: space-between;
         gap: 10px;
-        padding: 12px 15px;
-        border-bottom: 1px solid var(--line);
-      }
-      .hunk-title {
-        font-size: 12px;
-        font-weight: 600;
-        margin-bottom: 0;
-      }
-      .collapse-button {
-        display: flex;
-        align-items: center;
-        gap: 9px;
         flex: 1;
         min-width: 0;
-        padding: 0;
         border: 0;
         background: none;
         text-align: left;
-        overflow-wrap: anywhere;
+        padding: 0;
       }
-      .collapse-button::before {
-        content: "▾";
+      .file-toggle::before {
+        content: "⌄";
         color: var(--muted);
       }
-      .is-collapsed .collapse-button::before {
-        content: "▸";
+      .is-collapsed .file-toggle::before {
+        content: "›";
       }
-      .is-collapsed .hunk-top {
+      .is-collapsed .file-header {
         border-bottom: 0;
+        border-radius: 6px;
+      }
+      .file-title {
+        font:
+          600 12px ui-monospace,
+          SFMono-Regular,
+          Consolas,
+          monospace;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .viewed-control {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        padding: 3px 7px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .viewed-control input {
+        margin: 0;
+        accent-color: var(--link);
+      }
+      .is-viewed .viewed-control {
+        color: var(--link);
+      }
+      .hunk {
+        position: relative;
+        scroll-margin-top: 15px;
+      }
+      .hunk + .hunk {
+        border-top: 1px solid var(--line);
       }
       .hint {
         position: relative;
         display: inline-block;
+        min-width: 0;
+        max-width: 100%;
       }
       .context-button {
         font-size: 11px;
         border: 0;
         padding: 4px 7px;
         background: var(--subtle);
-        white-space: nowrap;
+        text-align: left;
+        overflow-wrap: anywhere;
       }
       .peek {
         display: none;
         position: absolute;
-        right: 0;
-        top: 100%;
+        left: 0;
+        bottom: 100%;
         width: 290px;
         padding: 15px;
         border: 1px solid var(--line);
@@ -413,19 +470,19 @@
           Consolas,
           monospace;
         color: var(--muted);
-        background: var(--subtle);
+        background: var(--range);
         overflow-wrap: anywhere;
       }
       .code {
         overflow-x: auto;
-        padding: 6px 0;
+        padding: 0;
       }
       .code-line {
         display: grid;
         grid-template-columns: 37px 37px 20px 1fr;
         min-width: max-content;
         font:
-          11.5px/1.9 ui-monospace,
+          12px/1.7 ui-monospace,
           SFMono-Regular,
           Consolas,
           monospace;
@@ -437,10 +494,6 @@
       }
       .code-line.del {
         background: var(--del);
-      }
-      .hunk.important .code-line.add,
-      .hunk.important .code-line.del {
-        border-left-color: var(--accent);
       }
       .line-number {
         color: var(--line-number);
@@ -456,92 +509,134 @@
       .line-text {
         white-space: pre;
       }
-      .hunk-foot {
+      .annotation-bar {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 9px 13px;
+        flex-wrap: wrap;
+        gap: 5px 16px;
+        padding: 6px 12px;
         border-top: 1px solid var(--line);
-        font-size: 11px;
+        background: var(--panel);
+        font-size: 12px;
       }
-      .read-button {
-        border: 0;
-        padding: 3px 5px;
-        font-size: 11px;
+      .annotation-bar .context-button {
+        background: none;
+        padding: 2px 0;
         color: var(--muted);
       }
-      .read-button[aria-pressed="true"] {
+      .important .annotation-bar .context-button {
         color: var(--ink);
       }
-      .file-section {
-        margin-top: 30px;
-        scroll-margin-top: 16px;
-      }
-      .file-heading {
-        min-width: 0;
-      }
-      .file-reason {
-        display: block;
-        margin-top: 3px;
-        color: var(--muted);
-        font-size: 11px;
+      .check {
+        margin: 0;
+        color: var(--accent);
+        font-size: 12px;
+        overflow-wrap: anywhere;
       }
       .inline-context {
-        border: 0;
+        padding: 14px;
         border-top: 1px solid var(--line);
-        border-radius: 0 0 9px 9px;
-        margin: 0;
-        padding: 10px 14px;
         background: var(--panel);
       }
-      .inline-context > summary {
-        width: fit-content;
-        color: var(--muted);
+      .context-layout {
+        display: grid;
+        gap: 18px;
+      }
+      .context-layout.has-source {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
       }
       .context-body {
-        max-width: 800px;
-        padding-top: 6px;
+        min-width: 0;
       }
       .context-body p {
-        margin: 8px 0 12px;
+        margin: 6px 0 12px;
+        font-size: 12px;
         overflow-wrap: anywhere;
       }
       .context-body h3 {
         font-size: 12px;
-        margin: 18px 0 6px;
+        margin: 0 0 8px;
       }
-      .connections {
+      .context-map {
+        display: grid;
+        grid-template-columns: minmax(100px, 0.8fr) minmax(0, 1.2fr);
+        align-items: center;
+        column-gap: 18px;
+        margin: 14px 0;
+      }
+      .map-node {
+        min-width: 0;
+        text-align: left;
+        padding: 8px 10px;
+        font-size: 12px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--surface);
+        overflow-wrap: anywhere;
+      }
+      .map-node small {
+        display: block;
+        color: var(--muted);
+        font-size: 10px;
+        margin-top: 4px;
+      }
+      .map-current {
+        border-color: var(--accent-line);
+        position: relative;
+      }
+      .map-current::after {
+        content: "";
+        position: absolute;
+        left: 100%;
+        top: 50%;
+        width: 18px;
+        border-top: 1px dashed var(--muted);
+      }
+      .map-neighbors {
+        border-left: 1px dashed var(--muted);
+      }
+      .map-branch {
         display: flex;
         align-items: center;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin: 10px 0;
+        margin: 8px 0;
       }
-      .connection {
-        max-width: 100%;
-        text-align: left;
+      .map-branch::before {
+        content: "";
+        flex: 0 0 20px;
+        border-top: 1px dashed var(--muted);
+      }
+      .map-branch .map-node {
+        flex: 1;
+      }
+      .source-preview {
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--code-surface);
+        padding: 10px;
+        align-self: start;
+      }
+      .source-preview .dialog-head {
+        align-items: start;
+        gap: 8px;
         font-size: 12px;
         overflow-wrap: anywhere;
       }
-      .connection small {
-        display: block;
+      .source-preview pre {
+        white-space: pre;
+        overflow: auto;
+        max-height: 310px;
+        margin: 10px 0 0;
+      }
+      .source-preview .source-meta {
+        font-size: 11px;
         color: var(--muted);
       }
-      .check {
-        flex: 1;
-        margin: 0;
-        color: var(--accent);
-        overflow-wrap: anywhere;
-      }
-      .hunk-foot {
-        gap: 16px;
-      }
-      .read-button {
-        margin-left: auto;
-        white-space: nowrap;
-      }
       .snapshot-details {
-        margin-bottom: 20px;
+        margin: 10px 0;
+        background: none;
+        border: 0;
+        padding: 0;
       }
       .snapshot-details > p {
         max-width: 800px;
@@ -597,9 +692,14 @@
         padding: 15px;
         border-radius: 6px;
       }
+      @media (max-width: 1100px) {
+        .context-layout.has-source {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
       @media (max-width: 900px) {
         .layout {
-          grid-template-columns: 180px minmax(0, 1fr);
+          grid-template-columns: 210px minmax(0, 1fr);
         }
         main {
           padding: 22px 16px 50px;
@@ -643,14 +743,22 @@
         .peek {
           width: min(270px, 75vw);
         }
-        .hunk-top {
-          padding: 10px;
+        .file-header {
+          gap: 8px;
+          flex-wrap: wrap;
+          padding: 8px;
+        }
+        .file-toggle {
+          flex-basis: calc(100% - 95px);
+        }
+        .file-header .counts {
+          display: none;
         }
         .code-line {
           grid-template-columns: 28px 28px 16px 1fr;
         }
         .file-section {
-          margin-top: 22px;
+          margin-bottom: 12px;
         }
       }
       @media (prefers-reduced-motion: reduce) {
@@ -682,18 +790,12 @@
           <input
             id="search"
             type="search"
-            placeholder="Find a file or concept…"
-            aria-label="Find a file or concept"
+            placeholder="Filter files or context…"
+            aria-label="Filter files or context"
           />
-          <label for="order" class="small muted">Read in</label>
-          <select id="order">
-            <option value="review">Suggested review order</option>
-            <option value="path">File path order</option>
-          </select>
           <div class="eyebrow" id="file-count"></div>
           <div id="files"></div>
           <div class="progress"><div id="progress-bar"></div></div>
-          <div class="muted small" id="progress-label"></div>
         </div>
       </nav>
       <main>
@@ -714,6 +816,16 @@
             correctness.
           </p>
         </details>
+        <div class="review-toolbar">
+          <strong
+            >Files changed <span class="chip" id="total-files"></span
+          ></strong>
+          <span class="muted small" id="progress-label"></span>
+          <select id="order" aria-label="Diff order">
+            <option value="review">Suggested review order</option>
+            <option value="path">File path order</option>
+          </select>
+        </div>
         <div id="diff"></div>
       </main>
     </div>
@@ -761,6 +873,8 @@
       let selectedFile,
         query = "";
       const expanded = new Set();
+      const closedFolders = new Set();
+      const sourceSelection = new Map();
       const annotationOrder = new Map(
         (R?.annotations || []).map((a, i) => [a.hunk_id, i]),
       );
@@ -783,26 +897,22 @@
           ...file.hunks.map((h) => annotationOrder.get(h.id) ?? Infinity),
         );
       }
-      function reason(file) {
-        if (!R) return "";
-        if (priority(file) === 0) return "Review focus";
-        if (priority(file) === 2) return "Mechanical only";
-        if (
-          file.hunks.some((h) => !annotations.has(h.id)) ||
-          !file.hunks.length
-        )
-          return "Not assessed";
-        return "Supporting changes";
+      function readUnits(file) {
+        return file.hunks.length ? file.hunks.map((h) => h.id) : [file.id];
+      }
+      function isViewed(file) {
+        return readUnits(file).every((id) => read.has(id));
       }
       let read = new Set();
       try {
         const saved = JSON.parse(
           localStorage.getItem("change-review:" + S.snapshot_id) || "[]",
         );
+        const valid = new Set(S.files.flatMap(readUnits));
         if (Array.isArray(saved))
-          read = new Set(saved.filter((id) => hunkMap.has(id)));
+          read = new Set(saved.filter((id) => valid.has(id)));
       } catch (_) {}
-      const collapsed = new Set(read);
+      const collapsedFiles = new Set(S.files.filter(isViewed).map((f) => f.id));
       function prose(node, text) {
         for (const part of text.split(/(`[^`]+`)/g))
           node.append(
@@ -872,16 +982,30 @@
         return node;
       }
       function progress() {
+        const viewed = S.files.filter(isViewed).length;
         $("progress-label").textContent =
-          `${read.size} of ${hunks.length} blocks read`;
+          `${viewed} / ${S.files.length} viewed`;
         $("progress-bar").style.width =
-          (hunks.length ? (read.size / hunks.length) * 100 : 0) + "%";
+          (S.files.length ? (viewed / S.files.length) * 100 : 0) + "%";
+        for (const file of S.files) {
+          const marker = $("tree-status-" + file.id);
+          if (marker) marker.textContent = isViewed(file) ? "✓" : "";
+        }
       }
       function activeFile(id) {
         if (selectedFile === id) return;
         selectedFile = id;
-        for (const node of $("files").children)
+        for (const node of $("files").querySelectorAll(".file-link")) {
           node.setAttribute("aria-current", String(node.dataset.file === id));
+          if (node.dataset.file === id) {
+            for (
+              let parent = node.parentElement;
+              parent && parent !== $("files");
+              parent = parent.parentElement
+            )
+              if (parent.tagName === "DETAILS") parent.open = true;
+          }
+        }
       }
       function jump(id) {
         const target = $(id);
@@ -903,157 +1027,163 @@
           draw();
         }
         activeFile(h.file.id);
-        if (collapsed.has(id)) $(id).querySelector(".collapse-button").click();
+        if (collapsedFiles.has(h.file.id))
+          $(h.file.id).querySelector(".file-toggle").click();
         jump(id);
       }
       function showEvidence(e) {
         $("evidence-title").textContent = `${e.path}:${e.start}`;
         $("evidence-meta").textContent =
           `${e.side === "before" ? "Before · " + S.base.slice(0, 10) : "After · " + (S.working_tree ? "captured working tree" : S.head.slice(0, 10))} · snapshot ${S.snapshot_id.slice(0, 12)}`;
-        $("evidence-code").textContent = e.content
+        $("evidence-code").textContent = evidenceText(e);
+        $("evidence-dialog").showModal();
+      }
+      function evidenceText(e) {
+        return e.content
           .split("\n")
           .map((line, i) => String(e.start + i).padStart(4) + "  " + line)
           .join("\n");
-        $("evidence-dialog").showModal();
       }
       function context(h, a) {
-        const details = el("details", undefined, "inline-context");
-        details.id = "context-" + h.id;
-        details.open = expanded.has(h.id);
-        details.append(el("summary", a ? "Explore context" : "Source context"));
-        const root = el("div", undefined, "context-body");
+        const root = el("div", undefined, "inline-context");
+        root.id = "context-" + h.id;
+        root.hidden = !expanded.has(h.id);
+        const layout = el("div", undefined, "context-layout");
+        const body = el("div", undefined, "context-body");
+        const preview = el("section", undefined, "source-preview");
+        preview.hidden = true;
+        preview.tabIndex = -1;
+        preview.setAttribute("aria-label", "Source excerpt");
+        const sources = S.evidence.filter((e) =>
+          a ? a.evidence_ids.includes(e.id) : e.path === h.file.path,
+        );
+        function openSource(e, focus = true) {
+          sourceSelection.set(h.id, e.id);
+          preview.replaceChildren();
+          const heading = el("div", undefined, "dialog-head");
+          heading.append(
+            el("strong", `${e.path}:${e.start}`),
+            button("Close", () => {
+              sourceSelection.delete(h.id);
+              preview.hidden = true;
+              layout.classList.remove("has-source");
+              $("peek-button-" + h.id).focus({ preventScroll: true });
+            }),
+          );
+          preview.append(
+            heading,
+            el(
+              "p",
+              `${e.side === "before" ? "Before · " + S.base.slice(0, 10) : "After · " + (S.working_tree ? "captured working tree" : S.head.slice(0, 10))}`,
+              "source-meta",
+            ),
+            el("pre", evidenceText(e)),
+          );
+          preview.hidden = false;
+          layout.classList.add("has-source");
+          if (focus) preview.focus({ preventScroll: true });
+        }
         if (a) {
-          root.append(el("p", a.what));
-          if (a.why) {
-            root.append(
+          if (a.what) body.append(el("p", a.what));
+          const related = a.related_hunks
+            .filter((id) => id !== h.id)
+            .map((id) => hunkMap.get(id));
+          const citedFiles = new Map();
+          for (const e of sources) {
+            if (
+              e.path !== h.file.path &&
+              !related.some((r) => r.file.path === e.path) &&
+              (!citedFiles.has(e.path) || e.side === "after")
+            )
+              citedFiles.set(e.path, e);
+          }
+          if (related.length || citedFiles.size || a.where) {
+            body.append(el("h3", "Where this fits"));
+            if (a.where) body.append(el("p", a.where));
+            if (related.length || citedFiles.size) {
+              const map = el("div", undefined, "context-map");
+              const current = el("div", h.file.path, "map-node map-current");
+              current.append(el("small", h.symbol || "Selected change"));
+              const neighbors = el("div", undefined, "map-neighbors");
+              function branch(node) {
+                const row = el("div", undefined, "map-branch");
+                row.append(node);
+                neighbors.append(row);
+              }
+              for (const r of related) {
+                const node = button(
+                  r.file.path,
+                  () => choose(r.id),
+                  "map-node related-change",
+                );
+                node.append(el("small", "Suggested related edit"));
+                node.title =
+                  annotations.get(r.id)?.title || r.symbol || r.file.path;
+                branch(node);
+              }
+              for (const e of citedFiles.values()) {
+                const node = button(
+                  e.path,
+                  () => openSource(e),
+                  "map-node cited-source",
+                );
+                const state = S.files.some((f) => f.path === e.path)
+                  ? "changed file"
+                  : "unchanged file";
+                node.append(el("small", `Cited source · ${state}`));
+                branch(node);
+              }
+              map.append(current, neighbors);
+              body.append(
+                map,
+                el(
+                  "p",
+                  "Review links, not a verified call graph. Open a node to inspect the code.",
+                  "small muted",
+                ),
+              );
+            }
+          }
+          if (a.why)
+            body.append(
               el("h3", "Why?"),
               el("span", a.why_basis, "chip"),
               el("p", a.why),
             );
-          }
-          if (a.where || a.related_hunks.length) {
-            root.append(el("h3", "Connected changes"));
-            if (a.where) root.append(el("p", a.where));
-            const links = el("div", undefined, "connections");
-            links.append(el("span", h.file.path, "chip"));
-            for (const id of a.related_hunks) {
-              const related = hunkMap.get(id);
-              const link = button(
-                related.file.path,
-                () => choose(id),
-                "connection",
-              );
-              link.append(
-                el(
-                  "small",
-                  annotations.get(id)?.title ||
-                    related.symbol ||
-                    "Changed block",
-                ),
-              );
-              links.append(el("span", "↔", "muted"), link);
-            }
-            if (a.related_hunks.length) root.append(links);
-          }
         }
-        const sources = S.evidence.filter((e) =>
-          a ? a.evidence_ids.includes(e.id) : e.path === h.file.path,
-        );
         const evidence = el("details");
         evidence.append(el("summary", `Evidence · ${sources.length} excerpts`));
         if (!sources.length)
           evidence.append(
             el("p", "No source excerpt cited for this block.", "muted"),
           );
-        for (const e of sources) {
-          const unchanged = !S.files.some((f) => f.path === e.path);
+        for (const e of sources)
           evidence.append(
             button(
-              `${e.path}:${e.start} · ${e.side}${unchanged ? " · unchanged file" : ""}`,
-              () => showEvidence(e),
+              `${e.path}:${e.start} · ${e.side}`,
+              () => openSource(e),
               "evidence-link",
             ),
           );
-        }
-        root.append(evidence);
-        details.append(root);
-        details.addEventListener("toggle", () => {
-          if (details.open) expanded.add(h.id);
-          else expanded.delete(h.id);
-          $("peek-button-" + h.id)?.setAttribute(
-            "aria-expanded",
-            String(details.open),
-          );
-        });
-        return details;
+        body.append(evidence);
+        layout.append(body, preview);
+        root.append(layout);
+        const selected = sources.find(
+          (e) => e.id === sourceSelection.get(h.id),
+        );
+        if (selected) openSource(selected, false);
+        return root;
       }
       function renderHunk(h, file) {
         const a = annotations.get(h.id);
         const card = el(
           "article",
           undefined,
-          "hunk" +
-            (a?.importance === "focus" ? " important" : "") +
-            (read.has(h.id) ? " is-read" : ""),
+          "hunk" + (a?.importance === "focus" ? " important" : ""),
         );
         card.id = h.id;
         card.tabIndex = -1;
-        const top = el("div", undefined, "hunk-top");
-        const title = a?.title || h.symbol || "Changed block";
-        const body = el("div", undefined, "hunk-body");
-        body.id = "body-" + h.id;
-        const collapse = button(
-          title,
-          () => setCollapsed(!collapsed.has(h.id)),
-          "collapse-button hunk-title",
-        );
-        collapse.setAttribute("aria-controls", body.id);
-        function setCollapsed(value) {
-          if (value) collapsed.add(h.id);
-          else collapsed.delete(h.id);
-          body.hidden = value;
-          card.classList.toggle("is-collapsed", value);
-          collapse.setAttribute("aria-expanded", String(!value));
-          collapse.setAttribute(
-            "aria-label",
-            `${value ? "Expand" : "Collapse"} change: ${title}`,
-          );
-        }
-        setCollapsed(collapsed.has(h.id));
-        top.append(collapse);
-        const details = context({ ...h, file }, a);
-        const hint = el("div", undefined, "hint");
-        const pin = button(
-          "ⓘ",
-          () => {
-            const wasCollapsed = collapsed.has(h.id);
-            setCollapsed(false);
-            details.open = wasCollapsed || !details.open;
-            hint.classList.add("dismissed");
-          },
-          "context-button",
-        );
-        pin.id = "peek-button-" + h.id;
-        pin.setAttribute(
-          "aria-label",
-          "Explore: " + (a?.title || h.symbol || file.path),
-        );
-        pin.setAttribute("aria-controls", details.id);
-        pin.setAttribute("aria-expanded", String(details.open));
-        const peek = el("div", undefined, "peek");
-        peek.id = "peek-" + h.id;
-        peek.setAttribute("role", "tooltip");
-        peek.append(el("p", a?.what || "Open captured source excerpts."));
-        pin.setAttribute("aria-describedby", peek.id);
-        hint.append(pin, peek);
-        hint.addEventListener("keydown", (event) => {
-          if (event.key === "Escape") hint.classList.add("dismissed");
-        });
-        hint.addEventListener("mouseenter", () =>
-          hint.classList.remove("dismissed"),
-        );
-        pin.addEventListener("focus", () => hint.classList.remove("dismissed"));
-        body.append(el("div", h.header, "hunk-location"));
+        card.append(el("div", h.header, "hunk-location"));
         const code = el("div", undefined, "code");
         for (const line of h.lines) {
           const row = el("div", undefined, "code-line " + line.kind);
@@ -1069,82 +1199,198 @@
           );
           code.append(row);
         }
-        body.append(code);
-        const foot = el("div", undefined, "hunk-foot");
-        if (a?.check) foot.append(el("p", a.check, "check"));
-        const mark = button(
-          read.has(h.id) ? "✓ Read" : "Mark read",
+        card.append(code);
+        const details = context({ ...h, file }, a);
+        const bar = el("div", undefined, "annotation-bar");
+        const hint = el("div", undefined, "hint");
+        const pin = button(
+          "ⓘ " + (a?.title || "Source context"),
           () => {
-            if (read.has(h.id)) read.delete(h.id);
-            else read.add(h.id);
-            try {
-              localStorage.setItem(
-                "change-review:" + S.snapshot_id,
-                JSON.stringify([...read]),
-              );
-            } catch (_) {}
-            mark.textContent = read.has(h.id) ? "✓ Read" : "Mark read";
-            mark.setAttribute("aria-pressed", String(read.has(h.id)));
-            card.classList.toggle("is-read", read.has(h.id));
-            setCollapsed(read.has(h.id));
-            progress();
+            details.hidden = !details.hidden;
+            if (details.hidden) expanded.delete(h.id);
+            else expanded.add(h.id);
+            pin.setAttribute("aria-expanded", String(!details.hidden));
+            hint.classList.add("dismissed");
           },
-          "read-button",
+          "context-button",
         );
-        mark.setAttribute("aria-pressed", String(read.has(h.id)));
-        top.append(mark, hint);
-        if (a?.check) body.append(foot);
-        body.append(details);
-        card.append(top, body);
+        pin.id = "peek-button-" + h.id;
+        pin.setAttribute(
+          "aria-label",
+          "Explore: " + (a?.title || h.symbol || file.path),
+        );
+        pin.setAttribute("aria-controls", details.id);
+        pin.setAttribute("aria-expanded", String(!details.hidden));
+        const peek = el("div", undefined, "peek");
+        peek.id = "peek-" + h.id;
+        peek.setAttribute("role", "tooltip");
+        peek.append(el("p", a?.what || "Open captured source excerpts."));
+        pin.setAttribute("aria-describedby", peek.id);
+        hint.append(pin, peek);
+        hint.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") hint.classList.add("dismissed");
+        });
+        hint.addEventListener("mouseenter", () =>
+          hint.classList.remove("dismissed"),
+        );
+        pin.addEventListener("focus", () => hint.classList.remove("dismissed"));
+        bar.append(hint);
+        if (a?.check) bar.append(el("p", a.check, "check"));
+        card.append(bar, details);
         return card;
+      }
+      function icon(kind) {
+        const svg = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "svg",
+        );
+        svg.setAttribute("viewBox", "0 0 16 16");
+        svg.setAttribute("class", "icon");
+        svg.setAttribute("aria-hidden", "true");
+        const path = document.createElementNS(svg.namespaceURI, "path");
+        path.setAttribute(
+          "d",
+          kind === "folder"
+            ? "M1.5 3.5h5l1.5 2h6.5v8h-13z"
+            : "M4 1.5h5l3 3v10H4z M9 1.5v3h3",
+        );
+        path.setAttribute("fill", "none");
+        path.setAttribute("stroke", "currentColor");
+        path.setAttribute("stroke-linejoin", "round");
+        svg.append(path);
+        return svg;
+      }
+      function renderTree(files) {
+        const root = { folders: new Map(), files: [] };
+        for (const file of files) {
+          const parts = file.path.split("/");
+          parts.pop();
+          let node = root;
+          for (const part of parts) {
+            if (!node.folders.has(part))
+              node.folders.set(part, { folders: new Map(), files: [] });
+            node = node.folders.get(part);
+          }
+          node.files.push(file);
+        }
+        function appendTree(node, target, path = "") {
+          for (const [name, folder] of [...node.folders].sort(([a], [b]) =>
+            a.localeCompare(b),
+          )) {
+            const full = path + name + "/";
+            const details = el("details", undefined, "tree-folder");
+            details.open = !!query || !closedFolders.has(full);
+            const summary = el("summary");
+            summary.append(icon("folder"), document.createTextNode(name));
+            const children = el("div", undefined, "tree-children");
+            appendTree(folder, children, full);
+            details.append(summary, children);
+            details.addEventListener("toggle", () => {
+              if (query) return;
+              if (details.open) closedFolders.delete(full);
+              else closedFolders.add(full);
+            });
+            target.append(details);
+          }
+          for (const file of [...node.files].sort((a, b) =>
+            a.path.localeCompare(b.path),
+          )) {
+            const buttonNode = button(
+              "",
+              () => {
+                activeFile(file.id);
+                jump(file.id);
+              },
+              "file-link",
+            );
+            buttonNode.dataset.file = file.id;
+            buttonNode.setAttribute("aria-label", file.path);
+            buttonNode.title = file.path;
+            const status = el("span", "", "tree-status");
+            status.id = "tree-status-" + file.id;
+            status.setAttribute("aria-hidden", "true");
+            buttonNode.append(
+              icon("file"),
+              el("span", file.path.split("/").pop(), "file-name"),
+              status,
+            );
+            target.append(buttonNode);
+          }
+        }
+        $("files").replaceChildren();
+        appendTree(root, $("files"));
+      }
+      function renderFile(file) {
+        const section = el("section", undefined, "file-section");
+        section.id = file.id;
+        section.tabIndex = -1;
+        section.setAttribute("aria-label", file.path);
+        section.classList.toggle("is-viewed", isViewed(file));
+        const heading = el("div", undefined, "file-header");
+        const body = el("div", undefined, "file-body");
+        body.id = "body-" + file.id;
+        const toggle = button(
+          "",
+          () => setCollapsed(!collapsedFiles.has(file.id)),
+          "file-toggle",
+        );
+        toggle.append(el("span", file.path, "file-title"));
+        toggle.title = file.path;
+        toggle.setAttribute("aria-controls", body.id);
+        function setCollapsed(value) {
+          if (value) collapsedFiles.add(file.id);
+          else collapsedFiles.delete(file.id);
+          body.hidden = value;
+          section.classList.toggle("is-collapsed", value);
+          toggle.setAttribute("aria-expanded", String(!value));
+          toggle.setAttribute(
+            "aria-label",
+            `${value ? "Expand" : "Collapse"} file: ${file.path}`,
+          );
+        }
+        setCollapsed(collapsedFiles.has(file.id));
+        const label = el("label", undefined, "viewed-control");
+        const viewed = el("input");
+        viewed.type = "checkbox";
+        viewed.checked = isViewed(file);
+        viewed.indeterminate =
+          !viewed.checked && readUnits(file).some((id) => read.has(id));
+        viewed.setAttribute("aria-label", `Viewed: ${file.path}`);
+        viewed.onchange = () => {
+          for (const id of readUnits(file)) {
+            if (viewed.checked) read.add(id);
+            else read.delete(id);
+          }
+          try {
+            localStorage.setItem(
+              "change-review:" + S.snapshot_id,
+              JSON.stringify([...read]),
+            );
+          } catch (_) {}
+          section.classList.toggle("is-viewed", viewed.checked);
+          setCollapsed(viewed.checked);
+          progress();
+        };
+        label.append(viewed, document.createTextNode("Viewed"));
+        heading.append(toggle, counts(file), label);
+        if (!file.hunks.length) body.append(el("pre", file.patch));
+        for (const h of file.hunks) body.append(renderHunk(h, file));
+        section.append(heading, body);
+        return section;
       }
       function draw() {
         const files = visibleFiles();
         selectedFile = undefined;
         $("file-count").textContent =
           `${files.length} of ${S.files.length} files`;
-        $("files").replaceChildren();
-        const diff = $("diff");
-        diff.replaceChildren();
-        for (const file of files) {
-          const node = button(
-            "",
-            () => {
-              activeFile(file.id);
-              jump(file.id);
-            },
-            "file-link",
-          );
-          node.dataset.file = file.id;
-          node.setAttribute("aria-label", file.path);
-          const parts = file.path.split("/");
-          const name = parts.pop();
-          if (parts.length)
-            node.append(el("span", parts.join("/") + "/", "folder"));
-          node.append(el("strong", name), counts(file));
-          $("files").append(node);
-          const section = el("section", undefined, "file-section");
-          section.id = file.id;
-          section.tabIndex = -1;
-          section.setAttribute("aria-label", file.path);
-          const heading = el("div", undefined, "file-header");
-          const nameplate = el("div", undefined, "file-heading");
-          nameplate.append(el("div", file.path, "file-title"));
-          if (reason(file))
-            nameplate.append(el("span", reason(file), "file-reason"));
-          heading.append(nameplate, counts(file));
-          section.append(heading);
-          if (!file.hunks.length) section.append(el("pre", file.patch));
-          for (const h of file.hunks.filter((h) => matches(h, file)))
-            section.append(renderHunk(h, file));
-          diff.append(section);
-        }
+        renderTree(files);
+        $("diff").replaceChildren(...files.map(renderFile));
         if (!files.length)
-          diff.append(
+          $("diff").append(
             el(
               "div",
               S.files.length
-                ? "No changes match this search."
+                ? "No files match this search."
                 : S.omitted.length
                   ? "All changed files were omitted. See the reasons above."
                   : "No changes in this comparison.",
@@ -1154,6 +1400,7 @@
         activeFile(files[0]?.id);
         progress();
       }
+      $("total-files").textContent = String(S.files.length);
       $("title").textContent = S.title;
       document.title = S.title + " · Change Review";
       if (R?.summary) {

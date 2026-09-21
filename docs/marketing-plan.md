@@ -31,8 +31,8 @@ shared-retries example:
 1. Open the review at the shared delivery change.
 2. Hover to reveal that manual uploads now retry too.
 3. Open the evidence for the unchanged upload caller.
-4. Return to the diff, mark the block read, and let it collapse.
-5. Expand it again with the read marker intact, or continue to the next file.
+4. Return to the diff, mark the file **Viewed**, and let it collapse.
+5. Expand it again with the viewed marker intact, or continue to the next file.
 
 The memorable moment: **“An unchanged file now behaves differently.”**
 
