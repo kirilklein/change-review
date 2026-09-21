@@ -1,6 +1,6 @@
 <p align="center">
   <a href="docs/assets/screenshot.png">
-    <img src="docs/assets/screenshot.png" alt="Close-up of a highlighted code change with its hover context card explaining behavior and callers" width="1200">
+    <img src="docs/assets/screenshot.png" alt="Dark-theme close-up of a highlighted code change with its hover context card explaining behavior and callers" width="1200">
   </a>
 </p>
 
@@ -32,6 +32,9 @@ code, and source links you can open to check the story.
 
 **One command produces one self-contained HTML review.** Open it in your browser
 or Claude Desktop. No web server, database, npm install, or Python packages needed.
+
+**Dark by default.** Use the **Light / Dark** button in the header to switch themes.
+Your browser remembers your choice.
 
 > The screenshot shows the working viewer with a fictional delivery library.
 > This is an early, usable prototype; explanations are suggestions for your review.
