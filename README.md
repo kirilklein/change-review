@@ -14,7 +14,7 @@
 
 <p align="center">
   A Git diff with the context you need to make it yours.<br>
-  Hover for the explanation. Follow the evidence. Keep your place.
+  See the consequence. Follow the evidence. Keep your place.
 </p>
 
 <p align="center">
@@ -36,6 +36,8 @@ or Claude Desktop. No web server, database, npm install, or Python packages need
 **Dark by default.** Use the **Light / Dark** button in the header to switch themes.
 Your browser remembers your choice.
 
+Screenshots: [Dark](docs/assets/screenshot.png) · [Light](docs/assets/screenshot-light.png).
+
 > The screenshot shows the working viewer with a fictional delivery library.
 > This is an early, usable prototype; explanations are suggestions for your review.
 
@@ -44,14 +46,15 @@ Your browser remembers your choice.
 | While you read                 | What you get                                                                                                                                                                   |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Find the important parts**   | Scroll through every file in suggested review order: focus changes first, supporting changes next, mechanical changes last. Switch to file path order anytime.                 |
-| **Hover, then go deeper**      | A small context cue beneath the relevant code. Hover for the consequence; click for rationale and a local map of related code.                                                 |
+| **See context, then explore**  | A short consequence beneath the code, with a prominent **Explore context** button showing the related-file count. Open it for rationale, a local map, and evidence.            |
 | **Understand the reason**      | Rationale stays inside expandable context, labeled **stated intent**, **inferred**, or **unknown**.                                                                            |
 | **Check the evidence**         | Open captured source excerpts with file paths, line numbers, and before/after labels.                                                                                          |
 | **Follow the whole change**    | A directory tree follows your scroll. The context map links suggested related edits and cited sources, including unchanged files. Source excerpts open alongside the context.  |
 | **Pick up where you left off** | Mark a file **Viewed** to collapse all its changes. Expand it without clearing its marker. Progress is saved for that exact snapshot; older block-level progress is preserved. |
 
 New annotations have character budgets: a short overall summary, one takeaway per
-block, and a brief hover explanation. Specific review questions remain visible.
+block, and a brief explanation. Mechanical changes skip the upfront sentence.
+Specific review questions remain visible.
 Long summaries from older annotations remain available under **Review context & sources**.
 Suggested order reflects model annotations, not a verified risk score; unannotated
 blocks stay visible, and hunks within each file keep their source order.
