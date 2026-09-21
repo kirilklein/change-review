@@ -1,6 +1,6 @@
 <p align="center">
   <a href="docs/assets/screenshot.png">
-    <img src="docs/assets/screenshot.png" alt="Dark-theme close-up of a highlighted code change with its hover context card explaining behavior and callers" width="1200">
+    <img src="docs/assets/screenshot.png" alt="Dark-theme diff with a reviewed change collapsed above an expanded change, short takeaways, and inline context controls" width="1200">
   </a>
 </p>
 
@@ -41,14 +41,20 @@ Your browser remembers your choice.
 
 ## A diff you can explore
 
-| While you read                 | What you get                                                                                                            |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| **Find the important parts**   | Focus highlights identify changes the model thinks deserve attention. Every block remains available in **All changes**. |
-| **Hover, then go deeper**      | A quick context card on hover; click to keep the full explanation open beside the code.                                 |
-| **Understand the reason**      | What changed, where it fits, and why—with rationale labeled **stated intent**, **inferred**, or **unknown**.            |
-| **Check the evidence**         | Open captured source excerpts with file paths, line numbers, and before/after labels.                                   |
-| **Follow the whole change**    | A suggested reading order and **Read together** links connect edits across files.                                       |
-| **Pick up where you left off** | Mark blocks as read. Progress is saved in your browser for that exact snapshot.                                         |
+| While you read                 | What you get                                                                                                                                                   |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Find the important parts**   | Scroll through every file in suggested review order: focus changes first, supporting changes next, mechanical changes last. Switch to file path order anytime. |
+| **Hover, then go deeper**      | A short consequence on hover or keyboard focus; expand context inline for rationale, connected edits, and evidence.                                            |
+| **Understand the reason**      | A brief takeaway beside the diff; rationale stays behind **Explore context**, labeled **stated intent**, **inferred**, or **unknown**.                         |
+| **Check the evidence**         | Open captured source excerpts with file paths, line numbers, and before/after labels.                                                                          |
+| **Follow the whole change**    | One file list follows your scroll. Connected-change links jump to related edits; cited unchanged files are available in source evidence.                       |
+| **Pick up where you left off** | Mark a block as read to collapse it. Expand it again without clearing its read marker. Read progress is saved for that exact snapshot.                         |
+
+New annotations have character budgets: a short overall summary, one takeaway per
+block, and a brief hover explanation. Specific review questions remain visible.
+Long summaries from older annotations remain available under **Review context & sources**.
+Suggested order reflects model annotations, not a verified risk score; unannotated
+blocks stay visible, and hunks within each file keep their source order.
 
 ## Quick start
 

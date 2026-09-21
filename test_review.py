@@ -160,6 +160,15 @@ class ReviewTests(unittest.TestCase):
             [(2, None), (3, None), (None, 2), (None, None)],
         )
 
+    def test_verbose_annotations_remain_importable_without_truncation(self):
+        snapshot = self.change()
+        annotations = self.annotations(snapshot)
+        annotations["summary"] = "An older, detailed summary. " * 30
+        annotations["annotations"][0]["what"] = "An older explanation. " * 30
+        original = json.dumps(annotations)
+        review.validate_annotations(snapshot, annotations)
+        self.assertEqual(json.dumps(annotations), original)
+
     def test_pathspec_characters_are_literal_and_do_not_include_other_files(self):
         self.write("[a].py", "VALUE = 1\n")
         self.write("a.py", "OTHER = 2\n")
