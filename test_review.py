@@ -23,7 +23,8 @@ class ReviewTests(unittest.TestCase):
         self.write("delivery.py", "def send_batch(batch):\n    return deliver(batch)\n")
         self.write(
             "caller.py",
-            "from delivery import send_batch\n\ndef upload(batch):\n    return send_batch(batch)\n",
+            "from delivery import send_batch\n\ndef upload(batch):\n"
+            "    return send_batch(batch)\n",
         )
         self.write("README.md", "Shared delivery library.\n")
         self.commit()
@@ -123,9 +124,9 @@ class ReviewTests(unittest.TestCase):
         self.assertIn("empty.py", files)
         self.assertTrue(
             any(
-                l["kind"] == "del"
+                line["kind"] == "del"
                 for h in files["delivery.py"]["hunks"]
-                for l in h["lines"]
+                for line in h["lines"]
             )
         )
 
@@ -153,10 +154,13 @@ class ReviewTests(unittest.TestCase):
             review.validate_annotations(changed, annotations)
 
     def test_deleted_line_numbers_and_no_newline_marker(self):
-        patch_text = "@@ -2,2 +2,1 @@ def f():\n-old\n-older\n+new\n\\ No newline at end of file\n"
+        patch_text = (
+            "@@ -2,2 +2,1 @@ def f():\n-old\n-older\n+new\n"
+            "\\ No newline at end of file\n"
+        )
         lines = review.parse_hunks(patch_text, "f1")[0]["lines"]
         self.assertEqual(
-            [(l["old"], l["new"]) for l in lines],
+            [(line["old"], line["new"]) for line in lines],
             [(2, None), (3, None), (None, 2), (None, None)],
         )
 
@@ -236,7 +240,9 @@ class ReviewTests(unittest.TestCase):
             "args = sys.argv\nassert args[args.index('--tools') + 1] == ''\n"
             "assert '--strict-mcp-config' in args\n"
             "snapshot = json.loads(sys.stdin.read().split('\\n\\nSNAPSHOT\\n')[1])\n"
-            "print(json.dumps({'structured_output': {'snapshot_id': snapshot['snapshot_id'], 'summary': 'Transport fixture', 'annotations': []}}))\n"
+            "print(json.dumps({'structured_output': {"
+            "'snapshot_id': snapshot['snapshot_id'], "
+            "'summary': 'Transport fixture', 'annotations': []}}))\n"
         )
         fake.chmod(0o755)
         output = self.root / "output"

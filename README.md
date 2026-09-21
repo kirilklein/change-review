@@ -178,9 +178,21 @@ retry using `--snapshot` or import annotations from another session.
 
 ## Development
 
+The [marketing and launch plan](docs/marketing-plan.md) records the positioning,
+demo storyboard, pilot, and launch steps.
+
 ```bash
 python3 -m unittest -v
 ```
+
+With Black and Flake8 installed, check Python formatting and lint with:
+
+```bash
+black --check review.py test_review.py
+flake8 review.py test_review.py
+```
+
+The lint configuration uses Black's 88-character line length and slice spacing.
 
 The tests cover Git comparisons, captured source versions, exclusions, annotation
 validation, safe HTML embedding, and the CLI transport with a fake Claude process.

@@ -154,7 +154,8 @@ def collect(repo, base=None, head=None, pr=None, intent=""):
                     "view",
                     pr,
                     "--json",
-                    "number,url,title,body,baseRefOid,headRefOid,baseRefName,headRefName",
+                    "number,url,title,body,baseRefOid,headRefOid,"
+                    "baseRefName,headRefName",
                 ],
                 cwd=repo,
             )
@@ -242,7 +243,8 @@ def collect(repo, base=None, head=None, pr=None, intent=""):
         )
         if target is None and read_source(repo, None, path) != after:
             raise ReviewError(
-                f"{path} changed while capturing the review. Retry once edits have finished."
+                f"{path} changed while capturing the review. "
+                "Retry once edits have finished."
             )
         if not patch and before != after:
             patch = "".join(
@@ -351,7 +353,10 @@ def collect(repo, base=None, head=None, pr=None, intent=""):
         "files": files,
         "evidence": evidence,
         "omitted": omitted,
-        "context_note": "Bounded source excerpts and lexical references; references are not a verified call graph.",
+        "context_note": (
+            "Bounded source excerpts and lexical references; "
+            "references are not a verified call graph."
+        ),
     }
     snapshot["snapshot_id"] = fingerprint(snapshot)
     return snapshot
@@ -471,7 +476,8 @@ def validate_annotations(snapshot, annotations):
         raise ReviewError("Annotations must be a JSON object.")
     if annotations.get("snapshot_id") != snapshot["snapshot_id"]:
         raise ReviewError(
-            "Annotations belong to a different snapshot. Regenerate them for this review."
+            "Annotations belong to a different snapshot. "
+            "Regenerate them for this review."
         )
     if not isinstance(annotations.get("summary"), str) or not isinstance(
         annotations.get("annotations"), list
@@ -531,7 +537,8 @@ def explain(snapshot, model=None):
         "--settings",
         '{"disableAllHooks":true}',
         "--system-prompt",
-        "You explain code changes using only the supplied snapshot. Return the requested JSON.",
+        "You explain code changes using only the supplied snapshot. "
+        "Return the requested JSON.",
     ]
     if model:
         command += ["--model", model]
@@ -634,7 +641,8 @@ def main():
         render(snapshot, None, output / "index.html")
         print(f"Review: {output / 'index.html'}", flush=True)
         print(
-            f"Snapshot: {snapshot['snapshot_id'][:12]} · {len(snapshot['files'])} files · {len(snapshot['omitted'])} omitted",
+            f"Snapshot: {snapshot['snapshot_id'][:12]} · "
+            f"{len(snapshot['files'])} files · {len(snapshot['omitted'])} omitted",
             flush=True,
         )
         if args.explain and any(f["hunks"] for f in snapshot["files"]):
@@ -651,7 +659,8 @@ def main():
             render(snapshot, annotations, output / "index.html")
         elif not args.explain:
             print(
-                f"To add explanations, use --explain or give {output / 'request.txt'} to your agent."
+                "To add explanations, use --explain or give "
+                f"{output / 'request.txt'} to your agent."
             )
         if args.open:
             webbrowser.open((output / "index.html").as_uri())
