@@ -44,28 +44,30 @@
       :root[data-theme="light"] {
         color-scheme: light;
         --link: #245baf;
-        --range: #e9eff8;
-        --paper: #faf9f6;
-        --surface: #fff;
-        --panel: #f5f5f0;
-        --subtle: #f0f2ed;
-        --hover: #e9ede6;
-        --selected: #ebece6;
-        --ink: #262a2b;
-        --muted: #626e66;
-        --summary: #535c58;
-        --line: #e4e6e1;
+        --range: #dce7f5;
+        --paper: #e9edf2;
+        --surface: #f8fafc;
+        --panel: #eef1f5;
+        --subtle: #dde3eb;
+        --hover: #d5dde7;
+        --selected: #d3dfef;
+        --ink: #202733;
+        --muted: #526071;
+        --summary: #414e5f;
+        --line: #bac4d0;
         --accent: #99501c;
         --tint: #fbf0e3;
         --accent-line: #c79b6f;
-        --green: #236a4f;
-        --red: #a33e47;
-        --add: #eaf5ed;
-        --del: #fbeef0;
-        --line-number: #66796b;
-        --code-surface: #f7f8f4;
-        --shadow: #202a2820;
-        --backdrop: #16231c66;
+        --green: #176236;
+        --red: #8b2737;
+        --add: #c8ecd1;
+        --del: #f4cdd2;
+        --add-gutter: #b1dfbd;
+        --del-gutter: #ebb4bc;
+        --line-number: #3f4d5c;
+        --code-surface: #f8fafc;
+        --shadow: #20273320;
+        --backdrop: #20273366;
       }
       * {
         box-sizing: border-box;
@@ -377,12 +379,13 @@
         text-align: left;
         padding: 0;
       }
-      .file-toggle::before {
-        content: "⌄";
-        color: var(--muted);
+      .file-toggle .chevron {
+        width: 16px;
+        height: 16px;
+        transform: rotate(90deg);
       }
-      .is-collapsed .file-toggle::before {
-        content: "›";
+      .is-collapsed .file-toggle .chevron {
+        transform: none;
       }
       .is-collapsed .file-header {
         border-bottom: 0;
@@ -476,6 +479,7 @@
       .code {
         overflow-x: auto;
         padding: 0;
+        background: var(--code-surface);
       }
       .code-line {
         display: grid;
@@ -494,6 +498,20 @@
       }
       .code-line.del {
         background: var(--del);
+      }
+      .code-line.add .line-number,
+      .code-line.add .sign {
+        background: var(--add-gutter, var(--add));
+      }
+      .code-line.del .line-number,
+      .code-line.del .sign {
+        background: var(--del-gutter, var(--del));
+      }
+      .code-line.add .sign {
+        color: var(--green);
+      }
+      .code-line.del .sign {
+        color: var(--red);
       }
       .line-number {
         color: var(--line-number);
@@ -1245,18 +1263,24 @@
           "svg",
         );
         svg.setAttribute("viewBox", "0 0 16 16");
-        svg.setAttribute("class", "icon");
+        svg.setAttribute("class", kind === "chevron" ? "icon chevron" : "icon");
         svg.setAttribute("aria-hidden", "true");
         const path = document.createElementNS(svg.namespaceURI, "path");
         path.setAttribute(
           "d",
-          kind === "folder"
-            ? "M1.5 3.5h5l1.5 2h6.5v8h-13z"
-            : "M4 1.5h5l3 3v10H4z M9 1.5v3h3",
+          {
+            folder: "M1.5 3.5h5l1.5 2h6.5v8h-13z",
+            file: "M4 1.5h5l3 3v10H4z M9 1.5v3h3",
+            chevron: "M6 4l4 4-4 4",
+          }[kind],
         );
         path.setAttribute("fill", "none");
         path.setAttribute("stroke", "currentColor");
         path.setAttribute("stroke-linejoin", "round");
+        if (kind === "chevron") {
+          path.setAttribute("stroke-width", "1.5");
+          path.setAttribute("stroke-linecap", "round");
+        }
         svg.append(path);
         return svg;
       }
@@ -1334,7 +1358,7 @@
           () => setCollapsed(!collapsedFiles.has(file.id)),
           "file-toggle",
         );
-        toggle.append(el("span", file.path, "file-title"));
+        toggle.append(icon("chevron"), el("span", file.path, "file-title"));
         toggle.title = file.path;
         toggle.setAttribute("aria-controls", body.id);
         function setCollapsed(value) {

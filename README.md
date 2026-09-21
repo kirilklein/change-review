@@ -36,6 +36,8 @@ or Claude Desktop. No web server, database, npm install, or Python packages need
 **Dark by default.** Use the **Light / Dark** button in the header to switch themes.
 Your browser remembers your choice.
 
+Screenshots: [Dark](docs/assets/screenshot.png) · [Light](docs/assets/screenshot-light.png).
+
 > The screenshot shows the working viewer with a fictional delivery library.
 > This is an early, usable prototype; explanations are suggestions for your review.
 
